@@ -9,8 +9,10 @@
     "start": "npm run start --prefix backend"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "inngest": "^3.52.0",
     "mongoose": "^9.2.0"
   },
   "repository": {

@@ -6,9 +6,12 @@ import cors from "cors";
 import { serve } from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js";
 
+import { fileURLToPath } from 'url';
+
 const app = express();
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //middleware
 app.use(express.json());
@@ -34,7 +37,7 @@ app.get("/books", (req, res) => {
 
 if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     app.use(express.static(path.join(__dirname, "../../frontend/dist"))); 
-    app.get("/{*any}", (req, res) => {
+    app.get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../../frontend/dist", "index.html"));
     });
 }
