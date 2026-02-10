@@ -20,13 +20,17 @@ app.get("/books", (req, res) => {
     });
 });
 
-if(ENV.NODE_ENV === "production") {
+if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     app.use(express.static(path.join(__dirname, "../frontend/dist"))); 
     app.get("/{*any}", (req, res) => {
         res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
     });
 }
 
-app.listen(ENV.PORT || 3000, () => {
-    console.log(`Server is running on port ${ENV.PORT || 3000}`);
-});
+if (!process.env.VERCEL) {
+    app.listen(ENV.PORT || 3000, () => {
+        console.log(`Server is running on port ${ENV.PORT || 3000}`);
+    });
+}
+
+export default app;
