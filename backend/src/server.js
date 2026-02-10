@@ -3,6 +3,7 @@ import { ENV } from "./lib/env.js";
 import path from "path";
 
 import { fileURLToPath } from 'url';
+import { connectDB } from "./lib/db.js";
 
 const app = express();
 
@@ -30,10 +31,15 @@ if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     });
 }
 
-if (!process.env.VERCEL) {
+const startServer = async () => {
+    await connectDB();
     app.listen(ENV.PORT || 3000, () => {
         console.log(`Server is running on port ${ENV.PORT || 3000}`);
     });
+}
+
+if (!process.env.VERCEL) {
+    startServer();
 }
 
 export default app;
