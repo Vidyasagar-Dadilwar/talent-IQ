@@ -37,7 +37,7 @@ app.get("/books", (req, res) => {
 
 if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     app.use(express.static(path.join(__dirname, "../../frontend/dist"))); 
-    app.get("*", (req, res) => {
+    app.get("/{*any}", (req, res) => {
         res.sendFile(path.join(__dirname, "../../frontend/dist", "index.html"));
     });
 }
