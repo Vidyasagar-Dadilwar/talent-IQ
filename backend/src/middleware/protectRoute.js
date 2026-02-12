@@ -5,7 +5,7 @@ export const protectRoute = [
     requireAuth(),
     async(req, res, next) => {
         try {
-            const clerkId = req.auth().userId;
+            const clerkId = req.auth.userId;
             if(!clerkId){
                 return res.status(401).json({msg:"Unauthorized User"});
             }
@@ -18,7 +18,7 @@ export const protectRoute = [
             req.user = user;
             next();
         } catch (error) {
-            console.error("Error in protectRoute middleware:", error);
+            console.error("Error in protectRoute middleware:", error.message, error.stack);
             return res.status(500).json({msg:"Internal server error"});
         }
     }

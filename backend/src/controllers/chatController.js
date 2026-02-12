@@ -10,7 +10,7 @@ export async function getStreamToken(req, res) {
             userImage: req.user.image
          });
     } catch (error) {
-        console.error("Error in getStreamToken:", error);
+        console.error("Error in getStreamToken controller:", error.message, error.stack);
         return res.status(500).json({ msg: "Internal server error" });
     }
 }
