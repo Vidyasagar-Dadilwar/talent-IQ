@@ -5,8 +5,10 @@ import { connectDB } from "./lib/db.js";
 import cors from "cors";
 import { serve } from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js";
+import { clerkMiddleware } from '@clerk/express'
 
 import { fileURLToPath } from 'url';
+import chatRoutes from "./routes/chatRoutes.js";
 
 const app = express();
 
@@ -21,19 +23,19 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(clerkMiddleware()); // this add auth field to request obj: req.auth() (to verify user is authenticated)
+
 app.use("/api/inngest", serve({ client: inngest, functions }));
+
+app.use("/api/chat", chatRoutes);
 
 app.get("/health", (req, res) => {
     res.status(200).json({
-        message: "Server is up and running"
+        msg: "Server is up and running"
     });
 });
 
-app.get("/books", (req, res) => {
-    res.status(200).json({
-        message: "This is books endpoint"
-    });
-});
+
 
 if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     app.use(express.static(path.join(__dirname, "../../frontend/dist"))); 
