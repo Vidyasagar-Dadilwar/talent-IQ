@@ -44,15 +44,12 @@ if(ENV.NODE_ENV === "production" && !process.env.VERCEL) {
     });
 }
 
-const startServer = async () => {
-    await connectDB();
+await connectDB();
+
+if (!process.env.VERCEL) {
     app.listen(ENV.PORT || 3000, () => {
         console.log(`Server is running on port ${ENV.PORT || 3000}`);
     });
-}
-
-if (!process.env.VERCEL) {
-    startServer();
 }
 
 export default app;
