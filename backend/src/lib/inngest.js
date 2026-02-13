@@ -2,6 +2,7 @@ import { Inngest } from "inngest";
 import { connectDB } from "./db.js";
 import User from "../models/User.js";
 import { upsertStreamUser, deleteStreamUser } from "./stream.js";
+import { sendWelcomeEmail, sendGoodByeEmail } from "./resend.js";
 
 export const inngest = new Inngest({ id: "talent-iq" });
 
@@ -27,6 +28,9 @@ const syncUser = inngest.createFunction(
             name: newUser.name,
             image: newUser.profileImage
         });
+
+        //send welcome email
+        await sendWelcomeEmail(newUser.email);
     }
 );
 
@@ -36,12 +40,41 @@ const deleteUserFromDB = inngest.createFunction(
     async ({ event }) => {
         await connectDB();
         
-        const { id } = event.data;
+        const { id, email_addresses } = event.data;
+        const email = email_addresses[0]?.email_address;
+        
         await User.deleteOne({ clerkId: id });
 
         //delete from stream
         await deleteStreamUser(id.toString());
+
+        //send goodbye email
+        await sendGoodByeEmail(email);
     }
 );
 
-export const functions = [syncUser, deleteUserFromDB];
+const updateUser = inngest.createFunction(
+    {id: "update-user"},
+    {event: "clerk/user.updated"},
+    async ({ event }) => {
+        await connectDB();
+        
+        const { id, email_addresses, first_name, last_name, image_url } = event.data;
+        const email = email_addresses[0]?.email_address;
+        
+        await User.updateOne({ clerkId: id }, {
+            email: email,
+            name: `${first_name || ""} ${last_name || ""}`,
+            profileImage: image_url
+        });
+
+        //update in stream
+        await upsertStreamUser({
+            id: id.toString(),
+            name: `${first_name || ""} ${last_name || ""}`,
+            image: image_url
+        });
+    }
+);
+
+export const functions = [syncUser, deleteUserFromDB, updateUser];
