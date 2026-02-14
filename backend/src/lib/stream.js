@@ -1,5 +1,6 @@
 import { StreamChat } from "stream-chat";
 import { ENV } from "./env.js";
+import { StreamClient } from "@stream-io/node-sdk";
 
 const apiKey = ENV.STREAM_API_KEY;
 const apiSecret = ENV.STREAM_API_SECRET;
@@ -9,7 +10,9 @@ if(!apiKey || !apiSecret) {
     throw new Error("Missing Stream API key or secret");
 }
 
-export const chatClient = StreamChat.getInstance(apiKey, apiSecret);
+export const chatClient = StreamChat.getInstance(apiKey, apiSecret);    // this is for chat feature
+
+export const streamClient = new StreamClient(apiKey, apiSecret); // this is for video call feature
 
 export const upsertStreamUser = async (userData) => {
     try {
