@@ -1,4 +1,4 @@
-import express from "express";
+import express, { application } from "express";
 import { ENV } from "./lib/env.js";
 import path from "path";
 import { connectDB } from "./lib/db.js";
@@ -9,6 +9,7 @@ import { clerkMiddleware } from '@clerk/express'
 
 import { fileURLToPath } from 'url';
 import chatRoutes from "./routes/chatRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(clerkMiddleware()); // this add auth field to request obj: req.auth() (t
 app.use("/api/inngest", serve({ client: inngest, functions }));
 
 app.use("/api/chat", chatRoutes);
+app.use("/api/session", sessionRoutes);
 
 app.get("/health", (req, res) => {
     res.status(200).json({
