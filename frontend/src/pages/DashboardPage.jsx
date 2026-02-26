@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
-import { useActiveSessions, useCreateSession, useMyRecentSessions } from "../hooks/useSessions";
+import { useActiveSession, useCreateSession, useMyRecentSessions } from "../hooks/useSessions";
 
 import Navbar from "../components/Navbar";
 import WelcomeSection from "../components/WelcomeSection";
@@ -18,7 +18,7 @@ function DashboardPage() {
 
     const createSessionMutation = useCreateSession();
 
-    const { data: activeSessionsData, isLoading: loadingActiveSessions } = useActiveSessions();
+    const { data: activeSessionsData, isLoading: loadingActiveSessions } = useActiveSession();
     const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
     const handleCreateRoom = () => {
